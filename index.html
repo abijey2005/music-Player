@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Music Player</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #141E30, #243B55);
+            font-family: "Poppins", sans-serif;
+        }
+
+        .player-box {
+            width: 350px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+ 
+        }
+
+        h2 {
+            color: #fff;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        button {
+            padding: 12px 18px;
+            margin: 7px;
+            border: none;
+            border-radius: 50px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+
+        .main-btn {
+            background: #00d4ff;
+            color: #000;
+        }
+
+        .main-btn:hover {
+            background: #0c29ce;
+            color: antiquewhite;
+        }
+
+        .small-btn {
+            background: #ffffff20;
+            color: #fff;
+        }
+
+        .small-btn:hover {
+            background: #ffffff40;
+        }
+
+        .control {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .skip {
+            margin-top: 15px;
+        }
+        #cover {
+    width: 200px;
+    height: 200px;
+    border-radius: 500px;
+    object-fit: cover;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    border: 5px solid yellow;
+
+}
+.rotate{
+        animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+   
+            #songname {
+            color: #080808;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 15px 0 20px;
+        }
+               #progress {
+            width: 100%;
+            margin-top: 15px;
+            height: 8px;
+            border-radius: 10px;
+        }
+
+        .timer {
+            display: flex;
+            justify-content: space-between;
+            color: #fff;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <audio id="player"></audio>
+
+    <div class="player-box">
+        <h2>🎵 Premium Music Player</h2>
+        <img src="" id="cover" alt="Cover Image">
+        <div id="songname">Song Title</div>
+          <input type="range" id="progress" value="0">
+        <!-- Time Display -->
+        <div class="timer">
+              <span id="currentTime">0:00</span>
+            <span id="totalTime">0:00</span>
+        </div>
+
+
+        <div class="control">
+            <button class="main-btn" onclick="playSong()">▶ Play</button>
+            <button class="main-btn" onclick="pauseSong()">⏸ Pause</button>
+        </div>
+
+        <div class="control">
+            <button class="small-btn" onclick="prevSong()">⏮ Prev</button>
+            <button class="small-btn" onclick="nextSong()">⏭ Next</button>
+        </div>
+
+        <div class="skip">
+            <button class="small-btn" onclick="player.currentTime -= 5">⏪ 5s</button>
+            <button class="small-btn" onclick="player.currentTime += 5">5s ⏩</button>
+        </div>
+    </div>
+
+
+<script>
+let player = document.getElementById("player");
+let cover = document.getElementById("cover");
+let songname = document.getElementById("songname");
+
+let songs = [
+  "sweat.mp3",
+  "cscade.mp3",
+  "deep.mp3",
+  "hypr.mp3",
+  "retro.mp3",
+];
+
+let names = [
+  "Sweat Vibes",
+  "Cascade Flow",
+  "Deep Nights",
+  "Hyper Speed",
+  "Retro Times",
+];
+
+let images = [
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLg-OpHQVk75kf6a3Ogok6j7V2KPw06EAT2Q&s",
+  "https://source.boomplaymusic.com/group10/M00/04/15/f3f51070569c4fec8313623bd96c1b18H3000W3000_320_320.jpg",
+  "https://i.scdn.co/image/ab67616d00001e0224d286e13a66b91c7d2fe608",
+  "https://www.shutterstock.com/shutterstock/videos/23988403/thumb/1.jpg?ip=x480",
+  "https://c.saavncdn.com/041/Retro-Music-English-2019-20220926222052-500x500.jpg"
+];
+
+let index = 0;
+
+
+function loadSong() {
+    player.src = songs[index];
+    cover.src = images[index];
+    songname.innerHTML = names[index];
+}
+loadSong();
+
+function playSong() {
+  player.play();
+  cover.classList.add("rotate")
+}
+
+function pauseSong() {
+  player.pause();
+  cover.classList.remove("rotate")
+}
+
+function nextSong() {
+  index++;
+  if (index >= songs.length) index = 0;
+  loadSong();
+  playSong();
+}
+
+function prevSong() {
+  index--;
+  if (index < 0) index = songs.length - 1;
+  loadSong();
+  playSong();
+}
+
+player.addEventListener("loadedmetadata", () => {
+    totalTime.innerText = formatTime(player.duration);
+});
+
+player.addEventListener("timeupdate", () => {
+    progress.value = (player.currentTime / player.duration) * 100;
+    currentTime.innerText = formatTime(player.currentTime);
+});
+
+progress.addEventListener("input", () => {
+    player.currentTime = (progress.value / 100) * player.duration;
+});
+
+function formatTime(sec) {
+    let minutes = Math.floor(sec / 60);
+    let seconds = Math.floor(sec % 60);
+    if (seconds < 10) seconds = "0" + seconds;
+    return minutes + ":" + seconds;
+}
+</script>
+
+
+</body>
+</html>
